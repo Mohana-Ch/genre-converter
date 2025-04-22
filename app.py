@@ -30,3 +30,6 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # Use the port provided by Render
     app.run(host='0.0.0.0', port=port)
 
+@app.route('/<path:path>')
+def static_file(path):
+    return render_template(path)
