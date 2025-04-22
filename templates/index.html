@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Genre Converter</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #ffeef8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      color: #ff69b4;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      background: #fff0f5;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+      text-align: center;
+    }
+
+    input[type="file"] {
+      display: block;
+      margin: 10px auto;
+      background-color: #ffe4ec;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    button {
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #ff85c1;
+    }
+
+    .output-info {
+      margin-top: 20px;
+      color: #6a1b9a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>♪ Genre Magic ♪</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" name="genreFile" accept=".mp3" required />
+      <input type="file" name="sourceFile" accept=".mp3" required />
+      <button type="submit">Generate</button>
+    </form>
+    <div class="output-info" id="outputMessage"></div>
+  </div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      document.getElementById('outputMessage').innerText = 'Processing...';
+
+      try {
+        const response = await fetch('/process', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) throw new Error('Failed to convert');
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'converted_output.mp3';
+        a.click();
+
+        document.getElementById('outputMessage').innerText = 'Done! Your file is downloading.';
+      } catch (err) {
+        document.getElementById('outputMessage').innerText = 'Something went wrong 😢';
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
